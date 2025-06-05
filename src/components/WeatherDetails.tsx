@@ -5,15 +5,7 @@ import peopleImg from "../assets/people.png";
 import windImg from "../assets/wind.png";
 import humidImg from "../assets/humid.png";
 import WeatherCard from "./WeatherCard";
-import { useState } from "react";
-
-type WeatherKey =
-  | "rain"
-  | "highTemp"
-  | "lowTemp"
-  | "feelsLike"
-  | "wind"
-  | "humidity";
+import type { WeatherKey } from "../types/WeatherKey";
 
 const weatherData: {
   key: WeatherKey;
@@ -39,18 +31,7 @@ const weatherData: {
   { key: "humidity", imgSrc: humidImg, alt: "습도", label: "습도" },
 ];
 
-const WeatherDetails = () => {
-  const [weatherValues, setWeatherValues] = useState<
-    Record<WeatherKey, string>
-  >({
-    rain: "0 mm/h",
-    highTemp: "0℃",
-    lowTemp: "0℃",
-    feelsLike: "0℃",
-    wind: "0 m/s",
-    humidity: "0%",
-  });
-
+const WeatherDetails = ({ weatherValues }: any) => {
   return (
     <div className="detail-section">
       {weatherData.map(({ key, imgSrc, alt, label }) => (
