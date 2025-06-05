@@ -22,12 +22,15 @@ function App() {
     wind: "0 m/s",
     humidity: "0%",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const getCurrentLocation = () => {
-    navigator.geolocation.getCurrentPosition((postion) => {
-      const lat = postion.coords.latitude;
-      const lon = postion.coords.longitude;
-      fetchWeather(lat, lon).then((data) => {
+  const updateWeather = async (lat: number, lon: number) => {
+    setLoading(true);
+    setError(null);
+
+    fetchWeather(lat, lon)
+      .then((data) => {
         setWeatherValues({
           rain: `${data.rain ? data.rain : 0} mm/h`,
           highTemp: `${(data.main.temp_max - 273.15).toFixed(1)} ℃`,
@@ -39,30 +42,37 @@ function App() {
         setCurrentTemp(`${(data.main.temp - 273.15).toFixed(1)} ℃`);
         setCurrentCity(data.name);
         setIcon(data.weather[0].icon);
+      })
+      .catch((e) => {
+        console.error(e);
+        setError("날씨 정보를 가져오는데 실패했습니다.");
+      })
+      .finally(() => {
+        setLoading(false);
       });
+  };
+
+  const getCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition((postion) => {
+      const { latitude, longitude } = postion.coords;
+      updateWeather(latitude, longitude);
     });
   };
 
   const handleSearch = (value: string) => {
-    fetchPosition(value).then((data) => {
-      const lat = data[0].lat;
-      const lon = data[0].lon;
-      fetchWeather(lat, lon).then((data) => {
-        console.log(data);
-        setWeatherValues({
-          rain: `${data.rain ? data.rain : 0} mm/h`,
-          highTemp: `${(data.main.temp_max - 273.15).toFixed(1)} ℃`,
-          lowTemp: `${(data.main.temp_min - 273.15).toFixed(1)} ℃`,
-          feelsLike: `${(data.main.feels_like - 273.15).toFixed(1)} ℃`,
-          wind: `${data.wind.speed} m/s`,
-          humidity: `${data.main.humidity} %`,
-        });
-        setCurrentTemp(`${(data.main.temp - 273.15).toFixed(1)} ℃`);
-        setCurrentCity(data.name);
-        setIcon(data.weather[0].icon);
+    fetchPosition(value)
+      .then((data) => {
+        const { lat, lon } = data[0];
+        updateWeather(lat, lon);
+      })
+      .catch((e) => {
+        console.error(e);
+        setError("도시 정보를 찾을 수 없습니다.");
+      })
+      .finally(() => {
+        setLoading(false);
+        setValue("");
       });
-    });
-    setValue("");
   };
 
   useEffect(() => {
@@ -71,13 +81,24 @@ function App() {
 
   return (
     <div className="weather-app">
+      {loading && <span>로딩 중...</span>}
       <SearchSection
         value={value}
         setValue={setValue}
         onSearch={handleSearch}
       />
-      <CurrentWeather currentTemp={currentTemp} currentCity={currentCity} icon={icon}/>
-      <WeatherDetails weatherValues={weatherValues} />
+      {error ? (
+        <span>{error}</span>
+      ) : (
+        <>
+          <CurrentWeather
+            currentTemp={currentTemp}
+            currentCity={currentCity}
+            icon={icon}
+          />
+          <WeatherDetails weatherValues={weatherValues} />
+        </>
+      )}
     </div>
   );
 }

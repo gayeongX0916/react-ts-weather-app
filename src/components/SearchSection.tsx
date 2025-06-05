@@ -8,6 +8,7 @@ type searchSection = {
 };
 
 const SearchSection = ({ value, setValue, onSearch }: searchSection) => {
+  
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, value: string) => {
     if (e.key === "Enter") {
       onSearch(value);
