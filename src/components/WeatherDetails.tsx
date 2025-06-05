@@ -7,6 +7,10 @@ import humidImg from "../assets/humid.png";
 import WeatherCard from "./WeatherCard";
 import type { WeatherKey } from "../types/WeatherKey";
 
+type WeatherDetails = {
+  weatherValues: Record<WeatherKey, string>;
+};
+
 const weatherData: {
   key: WeatherKey;
   imgSrc: string;
@@ -31,7 +35,7 @@ const weatherData: {
   { key: "humidity", imgSrc: humidImg, alt: "습도", label: "습도" },
 ];
 
-const WeatherDetails = ({ weatherValues }: any) => {
+const WeatherDetails = ({ weatherValues }: WeatherDetails) => {
   return (
     <div className="detail-section">
       {weatherData.map(({ key, imgSrc, alt, label }) => (
