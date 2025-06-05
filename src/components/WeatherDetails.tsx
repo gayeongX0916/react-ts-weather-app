@@ -5,8 +5,7 @@ import peopleImg from "../assets/people.png";
 import windImg from "../assets/wind.png";
 import humidImg from "../assets/humid.png";
 import WeatherCard from "./WeatherCard";
-import { useEffect, useState } from "react";
-import fetchWeather from "../api/fetchWeather";
+import { useState } from "react";
 
 type WeatherKey =
   | "rain"
