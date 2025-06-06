@@ -34,7 +34,7 @@ const useWeather = () => {
           currentCity: data.name,
           icon: data.weather[0].icon,
           weatherValues: {
-            rain: `${data.rain ? data.rain : 0} mm/h`,
+            rain: `${data.rain?.["1h"] ?? 0} mm/h`,
             highTemp: `${(data.main.temp_max - 273.15).toFixed(1)} ℃`,
             lowTemp: `${(data.main.temp_min - 273.15).toFixed(1)} ℃`,
             feelsLike: `${(data.main.feels_like - 273.15).toFixed(1)} ℃`,
